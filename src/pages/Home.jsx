@@ -36,7 +36,7 @@ export const Home = () => {
 
     const search = searchValue ? `&title=${searchValue}` : '';
     fetch(
-      `https://66e7067a17055714e58b44ff.mockapi.io/items?page=1&limit=4&${
+      `https://66e7067a17055714e58b44ff.mockapi.io/items?page=1&${
         categoryId > 0 ? `category=${categoryId}` : ''
       }&sortBy=${sortType}${search}&order=desc`,
     )

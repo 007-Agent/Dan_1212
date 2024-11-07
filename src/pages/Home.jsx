@@ -1,22 +1,35 @@
 import React from 'react';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { setCategoryId } from '../redux/slices/filterSlice.js';
+
 import Categories from '../components/Categories.jsx';
 import PizzaBlock from '../components/pizzaBlock/PizzaBlock.jsx';
 import Skeleton from '../components/pizzaBlock/Skeleton.jsx';
 import Sort from '../components/Sort';
 import Pagination from '../components/Pagination/index.jsx';
-export const Home = ({ searchValue }) => {
+import { SearchContext } from '../App.js';
+
+export const Home = () => {
+  const dispatch = useDispatch();
+  const { categoryId, sort } = useSelector((state) => state.filter);
+  const sortType = sort.sortProperty;
+  // const sortType = useSelector((state) => state.filter.sort.sortProperty);
+
+  const { searchValue } = React.useContext(SearchContext);
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [categoryId, setCategortId] = React.useState(0);
-  const [sortType, setSortType] = React.useState({
-    name: 'популярности',
-    sort: 'raiting',
-  });
-  // ${
-  //   categoryId > 0 ? `categoty=${categoryId}` : ''
-  // }&sortBy=&{sortType.sort}&order=desc`,
+  // const [categoryId, setCategortId] = React.useState(0);
+  // const [sortType, setSortType] = React.useState({
+  //   name: 'популярности',
+  //   sort: 'raiting',
+  // });
+
+  const onChangeCategory = (id) => {
+    console.log(id);
+    dispatch(setCategoryId(id));
+  };
 
   React.useEffect(() => {
     setIsLoading(true);
@@ -25,7 +38,7 @@ export const Home = ({ searchValue }) => {
     fetch(
       `https://66e7067a17055714e58b44ff.mockapi.io/items?page=1&limit=4&${
         categoryId > 0 ? `category=${categoryId}` : ''
-      }&sortBy=${sortType.sort}${search}&order=desc`,
+      }&sortBy=${sortType}${search}&order=desc`,
     )
       .then((res) => {
         return res.json();
@@ -39,14 +52,7 @@ export const Home = ({ searchValue }) => {
 
         setIsLoading(false);
       });
-    // .then((data) => {
-    //   if (Array.isArray(data)) {
-    //     setItems(data);
-    //   } else {
-    //     setItems([]);
-    //   }
-    // });
-  }, [categoryId, sortType.sort, searchValue, currentPage]);
+  }, [categoryId, sortType, searchValue, currentPage]);
 
   const pizzas = items.map((obj) => (
     <PizzaBlock
@@ -80,8 +86,8 @@ export const Home = ({ searchValue }) => {
   return (
     <div className="container">
       <div className="content__top">
-        <Categories value={categoryId} onChangeCategory={(i) => setCategortId(i)} />
-        <Sort valueSort={sortType} onChangeSort={(i) => setSortType(i)} />
+        <Categories value={categoryId} onChangeCategory={onChangeCategory} />
+        <Sort />
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">

@@ -3,7 +3,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSort } from '../redux/slices/filterSlice';
 
-function Sort({ valueSort, onChangeSort }) {
+function Sort() {
   const dispatch = useDispatch();
   const sort = useSelector((state) => state.filter.sort);
 
@@ -16,7 +16,7 @@ function Sort({ valueSort, onChangeSort }) {
 
   const onClickListItem = (obj) => {
     console.log(obj);
-    dispatch(setSort(obj));
+    dispatch(setSort(obj)); // передаём нужный объект в хранилище
     setOpen(false);
   };
 

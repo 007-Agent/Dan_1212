@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  categoryId: 0,
+  categoryId: 0, // начальное состояние значения!
   sort: {
     name: 'популярности',
     sortProperty: 'raiting',
@@ -13,6 +13,7 @@ const filterSlice = createSlice({
   initialState,
   reducers: {
     setCategoryId(state, action) {
+      // методы, которые изменяют значения нашего хранилища, action - значени,которое используется для передачи данных, необходимых для обновления состояния хранилища
       state.categoryId = action.payload;
     },
     setSort(state, action) {

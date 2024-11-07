@@ -4,6 +4,13 @@ import { SearchContext } from '../../App';
 
 export const Search = () => {
   const { searchValue, setSearchValue } = React.useContext(SearchContext);
+
+  const inputRef = React.useRef(); // часто используется для получения доступа к DOM-элементам. Например, вы можете использовать его для управления фокусом на input-элементе. Точнее создаём ссылку!
+
+  const onClickClear = () => {
+    setSearchValue('');
+    inputRef.current.focus(); // Устанавливает фокус на input
+  };
   return (
     <div className={styles.root}>
       <svg
@@ -16,6 +23,7 @@ export const Search = () => {
         <path d="M0 0h48v48h-48z" fill="none" />
       </svg>
       <input
+        ref={inputRef} //  привязываем эту ссылку(inputRef) к определенному DOM-элементу!
         value={searchValue}
         onChange={(event) => setSearchValue(event.target.value)}
         type="text"
@@ -24,7 +32,7 @@ export const Search = () => {
       />
       {searchValue && (
         <svg
-          onClick={() => setSearchValue('')}
+          onClick={onClickClear}
           className={styles.clear}
           viewBox="0 0 20 20"
           xmlns="http://www.w3.org/2000/svg">

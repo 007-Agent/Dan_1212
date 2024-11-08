@@ -1,16 +1,50 @@
 import React from 'react';
 import styles from './Search.module.scss';
+import debounce from 'lodash.debounce';
 import { SearchContext } from '../../App';
 
 export const Search = () => {
-  const { searchValue, setSearchValue } = React.useContext(SearchContext);
+  const [value, setValue] = React.useState('');
+  const { setSearchValue } = React.useContext(SearchContext);
 
   const inputRef = React.useRef(); // часто используется для получения доступа к DOM-элементам. Например, вы можете использовать его для управления фокусом на input-элементе. Точнее создаём ссылку!
 
+  const debouncedSearch = React.useMemo(
+    () =>
+      debounce((str) => {
+        console.log('Hello');
+        setSearchValue(str);
+      }, 1000),
+    [setSearchValue],
+  );
+
+  const handleChange = React.useCallback(
+    (e) => {
+      setValue(e.target.value);
+      debouncedSearch(e.target.value);
+    },
+    [debouncedSearch],
+  );
+
   const onClickClear = () => {
     setSearchValue('');
+    setValue('');
     inputRef.current.focus(); // Устанавливает фокус на input
   };
+
+  // const updateSerachValue = React.useCallback(
+  //   debounce((str) => {
+  //     console.log('Hello');
+  //     setSearchValue(str);
+  //   }, 1000),
+  //   [],
+  // );
+
+  // const onChangeInput = (event) => {
+  //   setValue(event.target.value);
+  //   updateSerachValue(event.target.value);
+  // };
+
   return (
     <div className={styles.root}>
       <svg
@@ -24,13 +58,13 @@ export const Search = () => {
       </svg>
       <input
         ref={inputRef} //  привязываем эту ссылку(inputRef) к определенному DOM-элементу!
-        value={searchValue}
-        onChange={(event) => setSearchValue(event.target.value)}
+        value={value}
+        onChange={handleChange}
         type="text"
         placeholder="Поиск пиццы..."
         className={styles.input}
       />
-      {searchValue && (
+      {value && (
         <svg
           onClick={onClickClear}
           className={styles.clear}

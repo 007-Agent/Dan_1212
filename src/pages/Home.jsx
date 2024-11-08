@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { setCategoryId } from '../redux/slices/filterSlice.js';
+import { setCategoryId, setCurrentPage } from '../redux/slices/filterSlice.js';
 
 import Categories from '../components/Categories.jsx';
 import PizzaBlock from '../components/pizzaBlock/PizzaBlock.jsx';
@@ -13,14 +13,15 @@ import { SearchContext } from '../App.js';
 
 export const Home = () => {
   const dispatch = useDispatch();
-  const { categoryId, sort } = useSelector((state) => state.filter); // Он позволяет вам извлекать данные из хранилища Redux
+  const { categoryId, sort, currentPage } = useSelector((state) => state.filter); // Он позволяет вам извлекать данные из хранилища Redux
   const sortType = sort.sortProperty;
+
   // const sortType = useSelector((state) => state.filter.sort.sortProperty);
 
   const { searchValue } = React.useContext(SearchContext);
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [currentPage, setCurrentPage] = React.useState(1);
+  // const [currentPage, setCurrentPage] = React.useState(1); // Переснесли в redux toolkit пагинацию
   // const [categoryId, setCategortId] = React.useState(0);
   // const [sortType, setSortType] = React.useState({
   //   name: 'популярности',
@@ -30,6 +31,10 @@ export const Home = () => {
   const onChangeCategory = (id) => {
     console.log(id);
     dispatch(setCategoryId(id)); // Передаём в хранилище изменения категории
+  };
+
+  const onChangePage = (number) => {
+    dispatch(setCurrentPage(number));
   };
 
   React.useEffect(() => {
@@ -116,7 +121,7 @@ export const Home = () => {
       <div className="content__items">
         {isLoading ? [...new Array(6)].map((_, index) => <Skeleton key={index} />) : pizzas}
       </div>
-      <Pagination onChangePage={(number) => setCurrentPage(number)} />
+      <Pagination currentPage={currentPage} onChangePage={onChangePage} />
     </div>
   );
 };

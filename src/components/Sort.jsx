@@ -3,16 +3,18 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSort } from '../redux/slices/filterSlice';
 
-function Sort() {
+export const list = [
+  { name: 'популярности ', sortProperty: 'raiting' },
+  { name: 'цене', sortProperty: 'price' },
+  { name: 'алфавиту', sortProperty: 'title' },
+];
+
+export const Sort = React.memo(({ value }) => {
   const dispatch = useDispatch();
   const sort = useSelector((state) => state.filter.sort);
+  const sortRef = React.useRef();
 
   const [open, setOpen] = React.useState(false);
-  const list = [
-    { name: 'популярности ', sortProperty: 'raiting' },
-    { name: 'цене', sortProperty: 'price' },
-    { name: 'алфавиту', sortProperty: 'title' },
-  ];
 
   const onClickListItem = (obj) => {
     console.log(obj);
@@ -20,8 +22,24 @@ function Sort() {
     setOpen(false);
   };
 
+  React.useEffect(() => {
+    // делаем, что б sort-окно закрывалось при клике на document.body
+    const handleClickOutside = (event) => {
+      if (!event.composedPath().includes(sortRef.current)) {
+        setOpen(false);
+        console.log('click outside');
+      }
+    };
+
+    document.body.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.body.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="sort">
+    <div ref={sortRef} className="sort">
       <div className="sort__label">
         <svg
           width="10"
@@ -53,5 +71,6 @@ function Sort() {
       )}
     </div>
   );
-}
+});
+
 export default Sort;
